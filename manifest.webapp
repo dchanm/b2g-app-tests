@@ -1,0 +1,14 @@
+{
+  "name": "Super Crazy Basic App",
+  "installs_allowed_from": [ "*" ],
+  "type": "certified",
+  "permissions": {
+    "geolocation": {
+      "description": "geolocate"
+    },
+    "alarm": {
+      "description": "wake up",
+      "access": "readwrite"
+    }
+  }
+}

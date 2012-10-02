@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>mozApp</title>
+</head>
+  <script type="application/javascript" src="/tests/SimpleTest/SimpleTest.js"></script>
+  <link rel="stylesheet" type="text/css" href="/tests/SimpleTest/test.css"/>
+  <script type="application/javascript" src="boilerplate.js"></script>
+<script>
+
+function runTests(force) {
+  // boilerplate.js will defined isApp
+  // this is so we can run this as a normal mochitest outside
+  // of app context
+  if (!window.isApp || force) {
+    SimpleTest.waitForExplicitFinish();
+    // permissions should be added by bug 758269
+    is(window.navigator.mozPower, null, 'mozPower should be undefined');
+    isnot(false, false, "testing isnot");
+    ok(false, "testing ok");
+    cleanup();
+  }
+}
+
+function cleanup() {
+  // SimpleTest.finish() must be called after an app
+  // test to notify parent
+  SimpleTest.finish();
+}
+
+</script>
+<body onload="runTests()"> 
+</body>
+</html>
