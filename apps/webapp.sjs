@@ -1,7 +1,8 @@
 var manifest = {
   "name": "Super Crazy Basic App",
   "installs_allowed_from": [ "*" ],
-//  "type": "certified",
+  "type": "certified",
+  "package_path": "http://example.com/tests/webapi/app.zip",
   "permissions": {
     "geolocation": {
       "description": "geolocate"

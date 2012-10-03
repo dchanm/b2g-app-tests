@@ -31,7 +31,8 @@ var PermTest = (function () {
   var PACKAGE = true 
   var TEST_PATH =  "tests/webapi/"
   var APP_DOMAIN = "http://example.com/";
-  var INSTALL_URL = APP_DOMAIN + TEST_PATH + (PACKAGE ? "app.zip" : "apps/webapp.sjs");
+  var INSTALL_URL = APP_DOMAIN + TEST_PATH + "apps/webapp.sjs";
+  var PACKAGE_URL = APP_DOMAIN + TEST_PATH + "app.zip";
 
   /*
    * packaged apps have a different manifest url
@@ -74,11 +75,11 @@ var PermTest = (function () {
     var req = window.navigator.mozApps[aAction](aInstallURL);
     req.onsuccess = function _onsuccess() {
       ok(true, "Successfully installed");
-      createApp(_toAppManifestURL(aInstallURL));
+      createApp(_toAppManifestURL((PACKAGE ? PACKAGE_URL : aInstallURL)));
     }
 
-    req.onerror = function _onerror(e) {
-      ok(false, "Failed to install: " + e);
+    req.onerror = function _onerror() {
+      ok(false, "Failed to install: " + this.error.name);
       _cleanup();
     }
 
@@ -128,8 +129,8 @@ var PermTest = (function () {
             _cleanup();
           };
 
-          pending.onerror = function _onerror(e) {
-            ok(false, "Failed to uninstall: " + e);
+          pending.onerror = function _onerror() {
+            ok(false, "Failed to uninstall: " + this.error.name);
             _cleanup();
           };
         };
