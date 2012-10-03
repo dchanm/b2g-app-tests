@@ -1,13 +1,16 @@
 {
   "name": "Super Crazy Basic App",
   "installs_allowed_from": [ "*" ],
+  // remove type for web apps
   "type": "certified",
+  // package_path is needed for package apps
+  "package_path": "http://example.com/tests/webapi/app.zip",
   "permissions": {
     "geolocation": {
       "description": "geolocate"
     },
-    "alarm": {
-      "description": "wake up",
+    "contacts": {
+      "description": "contacts",
       "access": "readwrite"
     }
   }
