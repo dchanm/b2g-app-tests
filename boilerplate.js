@@ -1,4 +1,6 @@
-const {classes: Cc, interfaces: Ci, utils: Cu } = SpecialPowers.wrap(Components);
+const Cc = SpecialPowers.Cc;
+const Ci = SpecialPowers.Ci;
+const Cu = SpecialPowers.Cu;
 
 const permManager = Cc["@mozilla.org/permissionmanager;1"]
                       .getService(Ci.nsIPermissionManager);

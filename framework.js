@@ -21,12 +21,16 @@ var PermUtils = (function () {
 })();
 
 var PermTest = (function () {
-  const {classes: Cc, interfaces: Ci, utils: Cu } = SpecialPowers.wrap(Components);
+  const Cc = SpecialPowers.Cc;
+  const Ci = SpecialPowers.Ci;
+  const Cu = SpecialPowers.Cu;
   const Services = Cu.import("resource://gre/modules/Services.jsm").Services;
   const permManager = Cc["@mozilla.org/permissionmanager;1"]
                         .getService(Ci.nsIPermissionManager);
 
-  const registry = Cu.import("resource://gre/modules/Webapps.jsm").DOMApplicationRegistry;
+  // appsService accounts for parent/child process
+  const appsService = Cc["@mozilla.org/AppsService;1"]
+                        .getService(Ci.nsIAppsService);
 
   var PACKAGE = true 
   var TEST_PATH =  "tests/webapi/"
@@ -82,13 +86,12 @@ var PermTest = (function () {
       ok(false, "Failed to install: " + this.error.name);
       _cleanup();
     }
-
   }
 
   function createApp(aManifestURL) {
     // we have to create the app iframe after installing or the principal 
     // check will be wrong
-    var origin = registry.getAppByManifestURL(aManifestURL).origin
+    var origin = appsService.getAppByManifestURL(aManifestURL).origin
     var content = document.getElementById('content');
     var app = document.createElement('iframe');
     app.setAttribute('id', 'app');
@@ -143,10 +146,21 @@ var PermTest = (function () {
     SimpleTest.finish();
   }
 
-  function _reallyRun() {
-    addPermissions();
+  function _reallyInstall() {
+    is(permManager.testPermissionFromPrincipal(SpecialPowers.getNodePrincipal(document), "browser"),
+        Ci.nsIPermissionManager.ALLOW_ACTION,
+        "Need browser permission to make app iframe"); 
+    is(permManager.testPermissionFromPrincipal(SpecialPowers.getNodePrincipal(document), "webapps-manage"),
+        Ci.nsIPermissionManager.ALLOW_ACTION,
+        "Need webapps-manage permission to query apps");
     var action = 'install' + (PACKAGE ? 'Package' : '');
     install(action, INSTALL_URL);
+  }
+
+  function _reallyRun() {
+    addPermissions();
+    // this is a hack since addPermissions is async
+    window.setTimeout(_reallyInstall, 5000);
   }
 
   return {
@@ -161,7 +175,6 @@ var PermTest = (function () {
     accept: function _accept(aId) {
       var browser = Services.wm.getMostRecentWindow("navigator:browser");
       var content = browser.getContentWindow();
-
       var detail = {
         type: 'webapps-install-granted',
         id: aId,
