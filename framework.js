@@ -34,19 +34,7 @@ var PermTest = (function () {
   var INSTALL_URL = APP_DOMAIN + TEST_PATH + "apps/webapp.sjs";
   var PACKAGE_URL = APP_DOMAIN + TEST_PATH + "app.zip";
 
-  /*
-   * packaged apps have a different manifest url
-   * format than webapps, not to be confused with
-   * the install url
-   *
-   */
 
-  function _toAppManifestURL(aURL) {
-    if (PACKAGE) {
-      return "jar:" + aURL+ "!manifest.webapp"; 
-    }
-    return aURL;
-  }
 
 
   /*
@@ -75,7 +63,7 @@ var PermTest = (function () {
     var req = window.navigator.mozApps[aAction](aInstallURL);
     req.onsuccess = function _onsuccess() {
       ok(true, "Successfully installed");
-      createApp(_toAppManifestURL((PACKAGE ? PACKAGE_URL : aInstallURL)));
+      createApp(aInstallURL);
     }
 
     req.onerror = function _onerror() {
